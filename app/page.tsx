@@ -12,8 +12,10 @@ import {
 } from "lucide-react";
 import { Nav, Brand, api, notify, Toasts } from "@/components/common";
 import { flagshipIds, getPreset } from "@/lib/presets";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 export default function Home() {
+  const [ready, setReady] = useState(false);
+  useEffect(() => setReady(true), []);
   const [busy, setBusy] = useState(false);
   async function rehearse() {
     setBusy(true);
@@ -54,7 +56,7 @@ export default function Home() {
               <button
                 className="button secondary"
                 onClick={rehearse}
-                disabled={busy}
+                disabled={busy || !ready}
               >
                 <Play size={16} />
                 {busy ? "Opening studio…" : "Try a rehearsal"}

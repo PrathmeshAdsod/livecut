@@ -174,4 +174,54 @@ describe("Twitch OAuth", () => {
     expect(writes).toHaveLength(2);
     expect(await decrypt(u.access)).toBe("new-access");
   });
+  it("completes OAuth with verified identity and only opaque browser cookies", async () => {
+    const writes: unknown[][] = [];
+    runtime.DB = {
+      prepare: () => ({
+        bind: (...args: unknown[]) => ({
+          run: async () => {
+            writes.push(args);
+            return { success: true };
+          },
+        }),
+      }),
+    };
+    vi.spyOn(globalThis, "fetch")
+      .mockResolvedValueOnce(
+        Response.json({
+          access_token: "callback-access",
+          refresh_token: "callback-refresh",
+          expires_in: 3600,
+        }),
+      )
+      .mockResolvedValueOnce(
+        Response.json({ user_id: "123", client_id: "test-client" }),
+      )
+      .mockResolvedValueOnce(
+        Response.json({
+          data: [
+            {
+              id: "123",
+              login: "verified",
+              display_name: "Verified",
+              profile_image_url: "",
+            },
+          ],
+        }),
+      );
+    const response = await oauthCallback(
+      new Request(
+        "http://localhost:5173/api/auth/twitch/callback?state=expected&code=test-code",
+        { headers: { Cookie: "lc_oauth=expected" } },
+      ),
+    );
+    expect(response.status).toBe(302);
+    expect(response.headers.get("Location")).toBe(
+      "http://localhost:5173/creator",
+    );
+    expect(response.headers.get("Set-Cookie")).toContain("lc_session=");
+    expect(response.headers.get("Set-Cookie")).not.toContain("callback-access");
+    expect(writes).toHaveLength(2);
+    expect(writes[0]).not.toContain("callback-access");
+  });
 });

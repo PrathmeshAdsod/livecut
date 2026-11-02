@@ -129,7 +129,7 @@ npm run test:e2e
 npm run build
 ```
 
-Tests cover preset/schema validity; hostile and oversized input; duplicate normalization; deterministic diversity; round transition rules; AES-GCM integrity; HTTP-only cookies; origin checks; OAuth state, denial, revocation and token refresh; and the browser guest-to-export journey. Browser tests use separate creator/guest sessions, verify private entries remain hidden after approval until reveal, check unauthorized mutations, pause/resume, PNG downloads, and responsive widths. OAuth provider responses are mocked in unit tests. Real Twitch authorization, clip creation, streaming, Gemini inference and physical OBS capture require separate live evidence.
+Tests cover preset/schema validity; hostile and oversized input; duplicate normalization; deterministic diversity; round transition rules; AES-GCM integrity; HTTP-only cookies; origin checks; OAuth success, state, denial, revocation and token refresh; and Gemini failures, invalid outputs and safe finalist selection. Browser tests use separate creator/guest sessions, verify private entries remain hidden after approval until reveal, check unauthorized mutations, pause/resume, PNG downloads, genuine WebM uploads, byte-range playback, offline reconnects, and responsive widths. OAuth and Gemini provider responses are mocked in unit tests. Real Twitch authorization, clip creation, streaming, Gemini inference and physical OBS capture require separate live evidence.
 
 ## Codex and hackathon
 

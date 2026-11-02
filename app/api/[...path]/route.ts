@@ -259,6 +259,7 @@ async function handle(req: Request) {
     headers.set("ETag", object.httpEtag);
     let status = 200;
     if (
+      req.headers.has("Range") &&
       object.range &&
       "offset" in object.range &&
       object.range.offset !== undefined &&
@@ -321,7 +322,16 @@ async function handle(req: Request) {
     const u = await session(req);
     const owner = u?.id === r.creatorId;
     if (method === "GET") {
-      const all = await entryList(r.id);
+      const all = owner
+        ? await entryList(r.id)
+        : (
+            await db()
+              .prepare(
+                "SELECT id,roundId,nickname,mode,headline,detail,status,synthetic,suggested,reason,created FROM entries WHERE roundId=? AND status='approved' AND (id=? OR id=?) ORDER BY created,id",
+              )
+              .bind(r.id, r.revealId, r.winnerId)
+              .all<Entry>()
+          ).results;
       let guest = cookie(req, "lc_guest");
       const headers: Record<string, string> = {};
       if (!guest) {

@@ -48,9 +48,17 @@ export default defineConfig(async ({ command }) => {
       ...(managedLinux
         ? { host: "0.0.0.0", allowedHosts: ["terminal.local"] }
         : {}),
-      ...(isCodexSeatbeltSandbox
-        ? { watch: { useFsEvents: false, usePolling: true } }
-        : {}),
+      watch: {
+        ignored: [
+          "**/outputs/**",
+          "**/.local/**",
+          "**/test-results/**",
+          "**/playwright-report/**",
+        ],
+        ...(isCodexSeatbeltSandbox
+          ? { useFsEvents: false, usePolling: true }
+          : {}),
+      },
     },
     plugins: [
       vinext(),

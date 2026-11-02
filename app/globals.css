@@ -4441,3 +4441,18 @@ input[type="checkbox"] {
     display: none;
   }
 }
+.moment {
+  container-type: inline-size;
+}
+@container (max-width: 399px) {
+  .twitch-player {
+    display: none;
+  }
+  .twitch-mobile {
+    display: flex;
+    position: absolute;
+    inset: 30% 12px;
+    white-space: normal;
+    font-size: 11px;
+  }
+}

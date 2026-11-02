@@ -7,6 +7,7 @@ test("a private viewer creation reaches the approved overlay, winner and real PN
   page,
   browser,
 }) => {
+  await page.request.get("/api/me");
   await page.goto("/");
   await page.getByRole("button", { name: "Try a rehearsal" }).click();
   await expect(
