@@ -12,6 +12,9 @@ const eslintConfig = defineConfig([
     ".sites-runtime/**",
     "outputs/**",
     "work/**",
+    ".local/**",
+    "test-results/**",
+    "playwright-report/**",
   ]),
   {
     // This Vinext app uses deliberate full document navigation, including OAuth.
@@ -22,16 +25,6 @@ const eslintConfig = defineConfig([
       "@next/next/no-img-element": "off",
       "@next/next/no-location-assign-relative-destination": "off",
       // Initial browser-only state is synchronized after SSR to avoid hydration mismatch.
-      "react-hooks/set-state-in-effect": "off",
-    },
-  },
-  {
-    files: ["components/ui/**/*.{ts,tsx}", "hooks/use-mobile.ts"],
-    rules: {
-      // These files are vendored verbatim from shadcn@4.17.0. Keep the
-      // registry source intact while applying the stricter rules to Site code.
-      "@typescript-eslint/no-unused-vars": "off",
-      "react-hooks/purity": "off",
       "react-hooks/set-state-in-effect": "off",
     },
   },
