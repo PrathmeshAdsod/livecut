@@ -33,6 +33,37 @@ for (const file of files) {
   )
     problems.push(file + ": contains a local credential");
 }
+const historyNames = execFileSync(
+  "git",
+  ["log", "--all", "--name-only", "--format="],
+  { encoding: "utf8" },
+)
+  .split(/\r?\n/)
+  .filter(Boolean);
+const forbiddenHistory = historyNames.filter((file) =>
+  /\.env(?!\.example$)|\.dev\.vars|\.(db|sqlite|sqlite3)$/.test(file),
+);
+for (const file of new Set(forbiddenHistory))
+  problems.push(file + ": forbidden file exists in Git history");
+const sensitive = localSecrets.filter((secret) => secret.length > 12);
+const commits = execFileSync("git", ["log", "--all", "--format=%H"], {
+  encoding: "utf8",
+})
+  .trim()
+  .split(/\s+/)
+  .filter(Boolean);
+if (sensitive.length && commits.length) {
+  try {
+    execFileSync(
+      "git",
+      ["grep", "--quiet", "--fixed-strings", "-f", "-", ...commits, "--"],
+      { input: sensitive.join("\n") + "\n", stdio: ["pipe", "pipe", "pipe"] },
+    );
+    problems.push("A current local credential was found in Git history");
+  } catch (error) {
+    if (error.status !== 1) throw error;
+  }
+}
 const trackedSecretNames = files.filter((f) =>
   /\.env(?!\.example$)|\.dev\.vars/.test(f),
 );
@@ -44,3 +75,4 @@ console.log(
   ),
 );
 if (problems.length) process.exit(1);
+
