@@ -254,7 +254,9 @@ export function Viewer({ id }: { id: string }) {
                 <span>
                   Keep it creative, not cruel. No real-world misinformation,
                   harassment, private details, or impersonation. News treatments
-                  are fictional parody.
+                  are fictional parody. The creator may request Gemini-assisted
+                  moderation of submitted text; don’t include private
+                  information.
                 </span>
               </div>
             </div>
